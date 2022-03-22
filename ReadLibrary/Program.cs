@@ -9,6 +9,7 @@ namespace ReadLibrary
         {
             Console.WriteLine("Wat wil je doen?");
             Console.WriteLine("1) Lees Text File.");
+            Console.WriteLine("2) Lees XML File.");
             var keuze = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("");
@@ -19,8 +20,10 @@ namespace ReadLibrary
             {
                 case 1:
                     ReadText(input);//textFile
-                    Console.WriteLine("Uw toegangsniveau geeft je geen toegang tot deze file.");
                     break;
+                /*case 2:
+                    ReadXML(input);//textFile
+                    break;*/
                 default:
                     Console.WriteLine("Dit keuze bestaat niet.");
                     break;
