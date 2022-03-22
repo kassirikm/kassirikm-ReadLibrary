@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -24,6 +25,7 @@ namespace ReadLibrary
             Console.WriteLine("2) Lees XML File.");
             Console.WriteLine("3) Lees Encrypted text.");
             Console.WriteLine("4) Lees Encrypted XML.");
+            Console.WriteLine("5) Lees JSON File.");
             var keuze = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("");
@@ -54,6 +56,9 @@ namespace ReadLibrary
                     break;
                 case 3:
                     ReadEncryptedText(input, key);//textEncrypted
+                    break;
+                case 5:
+                    ReadJSON(input);//jsonText
                     break;
                 default:
                     Console.WriteLine("Dit keuze bestaat niet.");
@@ -271,6 +276,40 @@ namespace ReadLibrary
             }
 
         }
+        private static void ReadJSON(string input)
+        {
+            try
+            {
+                string fileName = input + ".json";
+                string jsonString = File.ReadAllText(fileName);
+                Vacature vacature = JsonSerializer.Deserialize<Vacature>(jsonString);
+
+                Console.WriteLine($"Naam: {vacature.Naam}");
+                Console.WriteLine($"Achternaam: {vacature.Achternaam}");
+                Console.WriteLine($"Leeftijd: {vacature.Leeftijd}");
+
+
+
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void MakeJSON()
+        {
+            var vacature = new Vacature
+            {
+                Naam = "Kassiri",
+                Achternaam = "Krouba",
+                Leeftijd = 33
+            };
+
+            string fileName = "jsonText.json";
+            string jsonString = JsonSerializer.Serialize(vacature);
+            File.WriteAllText(fileName, jsonString);
+        }
 
 
         private static void ReadEncryptedXml(string input, byte[] key)
@@ -288,6 +327,17 @@ namespace ReadLibrary
             {
                 File.Delete("textEncrypted.txt");
                 EncryptText("textEncrypted", key);
+            }
+
+            //make json file
+            if (!File.Exists("jsonText.json"))
+            {
+                MakeJSON();
+            }
+            else
+            {
+                File.Delete("jsonText.json");
+                MakeJSON();
             }
         }
     }
