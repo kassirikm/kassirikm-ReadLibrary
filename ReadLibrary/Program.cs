@@ -21,12 +21,12 @@ namespace ReadLibrary
             var role = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Wat wil je doen?");
-            Console.WriteLine("1) Lees Text File.");
-            Console.WriteLine("2) Lees XML File.");
-            Console.WriteLine("3) Lees Encrypted text.");
+            Console.WriteLine("1) Lees Text File. (vb: textFile)");
+            Console.WriteLine("2) Lees XML File. (vb: Daltons)");
+            Console.WriteLine("3) Lees Encrypted text. (vb: textEncrypted)");
             Console.WriteLine("4) Lees Encrypted XML.");
-            Console.WriteLine("5) Lees JSON File.");
-            Console.WriteLine("6) Lees Encrypted JSON File.");
+            Console.WriteLine("5) Lees JSON File. (vb: jsonText)");
+            Console.WriteLine("6) Lees Encrypted JSON File. (vb: jsonEncrypted)");
             var keuze = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("");
@@ -442,6 +442,17 @@ namespace ReadLibrary
                 File.Delete("jsonEncrypted.json");
                 makeEncryptionFiles(key);
             }
+
+            //make XML encrypted file
+            /*if (!File.Exists("encryptedXML.xml"))
+            {
+                EncryptAndSerialize("encryptedXML.xml", key);
+            }
+            else
+            {
+                File.Delete("encryptedXML.xml");
+                EncryptAndSerialize("encryptedXML.xml", key);
+            }*/
         }
     }
 }
