@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace ReadLibrary
 {
@@ -22,6 +23,7 @@ namespace ReadLibrary
             Console.WriteLine("1) Lees Text File.");
             Console.WriteLine("2) Lees XML File.");
             Console.WriteLine("3) Lees Encrypted text.");
+            Console.WriteLine("4) Lees Encrypted XML.");
             var keuze = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("");
@@ -200,6 +202,74 @@ namespace ReadLibrary
             }
         }
 
+        static void EncryptAndSerialize(string input, byte[] key)
+        {
+            try
+            {
+                using (var output = GetEncryptedXmlStream(input, key))
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(("<Vacature type='regular' Section='B'><Name>Kassiri" +
+                        "</Name></Vacature>"));
+                    doc.Save(input);
+                    XmlSerializer serializer = new XmlSerializer(
+                    typeof(XmlDocument));
+
+                    serializer.Serialize(output, doc);
+
+                    Console.WriteLine("----ENCRYPTION XML DONE ----");
+                }
+            }
+            catch (IOException e)
+            {
+                // error  
+                Console.WriteLine("---ENCRYPTION FAILED-(EncryptAndSerialize)--");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static Stream GetEncryptedXmlStream(string input, byte[] key)
+        {
+
+            // ENCRYPT DATA
+            try
+            {
+                // create file stream
+                using FileStream myStream = new FileStream(input, FileMode.OpenOrCreate);
+
+                // configure encryption key.  
+                using Aes aes = Aes.Create();
+                aes.Key = key;
+
+                // store IV
+                byte[] iv = aes.IV;
+                myStream.Write(iv, 0, iv.Length);
+
+                // encrypt filestream  
+                using CryptoStream cryptStream = new CryptoStream(
+                    myStream,
+                    aes.CreateEncryptor(),
+                    CryptoStreamMode.Write);
+
+                return cryptStream;
+
+
+            }
+            catch
+            {
+                // error  
+                Console.WriteLine("---ENCRYPTION FAILED-(GetEncryption)--");
+                throw;
+
+            }
+
+        }
+
+
+        private static void ReadEncryptedXml(string input, byte[] key)
+        {
+            throw new NotImplementedException();
+        }
         private static void makeEncryptionFiles(byte[] key)
         {
             //make encrypted text file
