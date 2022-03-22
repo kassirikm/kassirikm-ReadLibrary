@@ -43,7 +43,14 @@ namespace ReadLibrary
                     }
                     break;
                 case 2:
-                    ReadXML(input);//textFile
+                    if (role == 1)
+                    {
+                        ReadXML(input);//Daltons
+                    }
+                    else
+                    {
+                        Console.WriteLine("Uw toegangsniveau geeft je geen toegang tot deze file.");
+                    }
                     break;
                 case 3:
                     ReadEncryptedText(input, key);//textEncrypted
