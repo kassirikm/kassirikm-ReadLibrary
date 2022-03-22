@@ -26,6 +26,7 @@ namespace ReadLibrary
             Console.WriteLine("3) Lees Encrypted text.");
             Console.WriteLine("4) Lees Encrypted XML.");
             Console.WriteLine("5) Lees JSON File.");
+            Console.WriteLine("6) Lees Encrypted JSON File.");
             var keuze = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("");
@@ -59,6 +60,9 @@ namespace ReadLibrary
                     break;
                 case 5:
                     ReadJSON(input);//jsonText
+                    break;
+                case 6:
+                    ReadEncryptedJSON(input, key);//jsonEncrypted
                     break;
                 default:
                     Console.WriteLine("Dit keuze bestaat niet.");
@@ -311,6 +315,86 @@ namespace ReadLibrary
             File.WriteAllText(fileName, jsonString);
         }
 
+        private static void ReadEncryptedJSON(string input, byte[] key)
+        {
+            try
+            {
+                // create file stream
+                using FileStream myStream = new FileStream(input + ".json", FileMode.Open);
+
+                // create instance
+                using Aes aes = Aes.Create();
+
+                // reads IV value
+                byte[] iv = new byte[aes.IV.Length];
+                myStream.Read(iv, 0, iv.Length);
+
+                // decrypt data
+                using CryptoStream cryptStream = new CryptoStream(
+                   myStream,
+                   aes.CreateDecryptor(key, iv),
+                   CryptoStreamMode.Read);
+
+                // read stream
+                using StreamReader sReader = new StreamReader(cryptStream);
+
+                // display stream
+                Console.WriteLine("\n---SUCCESSFUL DECRYPTION---\n");
+
+                string jsonString = sReader.ReadToEnd();
+                Vacature vacature = JsonSerializer.Deserialize<Vacature>(jsonString);
+
+                Console.WriteLine($"Naam: {vacature.Naam}");
+                Console.WriteLine($"Achternaam: {vacature.Achternaam}");
+                Console.WriteLine($"Leeftijd: {vacature.Leeftijd}");
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("De file kon niet gelezen worden:");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void MakeEncryptedJSON(byte[] key)
+        {
+            try
+            {
+                var vacature = new Vacature
+                {
+                    Naam = "Kassiri",
+                    Achternaam = "Krouba",
+                    Leeftijd = 33
+                };
+
+                // create file stream
+                using FileStream myStream = new FileStream("jsonEncrypted.json", FileMode.OpenOrCreate);
+
+                // configure encryption key.  
+                using Aes aes = Aes.Create();
+                aes.Key = key;
+
+                // store IV
+                byte[] iv = aes.IV;
+                myStream.Write(iv, 0, iv.Length);
+
+                // encrypt filestream  
+                using CryptoStream cryptStream = new CryptoStream(
+                    myStream,
+                    aes.CreateEncryptor(),
+                    CryptoStreamMode.Write);
+
+                // write to filestream
+                using StreamWriter sWriter = new StreamWriter(cryptStream);
+                string jsonString = JsonSerializer.Serialize(vacature);
+                sWriter.WriteLine(jsonString);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("----ENCRYPTION JSON FAILED ---");
+            }
+        }
+
 
         private static void ReadEncryptedXml(string input, byte[] key)
         {
@@ -338,6 +422,17 @@ namespace ReadLibrary
             {
                 File.Delete("jsonText.json");
                 MakeJSON();
+            }
+
+            //make json encrypted file
+            if (!File.Exists("jsonEncrypted.json"))
+            {
+                MakeEncryptedJSON(key);
+            }
+            else
+            {
+                File.Delete("jsonEncrypted.json");
+                makeEncryptionFiles(key);
             }
         }
     }
