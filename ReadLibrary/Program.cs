@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 
 namespace ReadLibrary
 {
@@ -21,9 +22,9 @@ namespace ReadLibrary
                 case 1:
                     ReadText(input);//textFile
                     break;
-                /*case 2:
+                case 2:
                     ReadXML(input);//textFile
-                    break;*/
+                    break;
                 default:
                     Console.WriteLine("Dit keuze bestaat niet.");
                     break;
@@ -47,6 +48,44 @@ namespace ReadLibrary
                 Console.WriteLine("De file kon niet gelezen worden:");
                 Console.WriteLine(e.Message);
             }
+        }
+
+        static void ReadXML(string input)
+        {
+
+            try
+            {
+                // Open de Xml file met XmlTextReader.
+                using (XmlTextReader xr = new XmlTextReader(input + ".xml"))
+                {
+                    while (xr.Read())
+                    {
+                        switch (xr.NodeType)
+                        {
+                            /*case XmlNodeType.Element: // The node is an element.
+                                Console.Write("<" + xr.Name);
+                                Console.WriteLine(">");
+                                break;*/
+
+                            case XmlNodeType.Text: //Display the text in each element.
+                                Console.WriteLine(xr.Value);
+                                break;
+
+                                /* case XmlNodeType.EndElement: //Display the end of the element.
+                                     Console.Write("</" + xr.Name);
+                                     Console.WriteLine(">");
+                                     break;*/
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("De file kon niet gelezen worden:");
+                Console.WriteLine(e.Message);
+            }
+
+
         }
     }
 }
