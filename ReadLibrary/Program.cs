@@ -59,7 +59,15 @@ namespace ReadLibrary
                     ReadEncryptedText(input, key);//textEncrypted
                     break;
                 case 5:
-                    ReadJSON(input);//jsonText
+                    if (role == 1)
+                    {
+                        ReadJSON(input);//jsonText
+                    }
+                    else
+                    {
+                        Console.WriteLine("Uw toegangsniveau geeft je geen toegang tot deze file.");
+
+                    }
                     break;
                 case 6:
                     ReadEncryptedJSON(input, key);//jsonEncrypted
