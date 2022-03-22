@@ -13,6 +13,11 @@ namespace ReadLibrary
             byte[] key = { 0x02, 0x03, 0x01, 0x03, 0x03, 0x07, 0x07, 0x08, 0x09, 0x09, 0x11, 0x11, 0x16, 0x17, 0x19, 0x16 };
             makeEncryptionFiles(key);
 
+            Console.WriteLine("What is jouw toegangsniveau?");
+            Console.WriteLine("1) Admin");
+            Console.WriteLine("2) Andere");
+            var role = Convert.ToInt32(Console.ReadLine());
+
             Console.WriteLine("Wat wil je doen?");
             Console.WriteLine("1) Lees Text File.");
             Console.WriteLine("2) Lees XML File.");
@@ -26,7 +31,14 @@ namespace ReadLibrary
             switch (keuze)
             {
                 case 1:
-                    ReadText(input);//textFile
+                    if (role == 1)
+                    {
+                        ReadText(input);//textFile
+                    }
+                    else
+                    {
+                        Console.WriteLine("Uw toegangsniveau geeft je geen toegang tot deze file.");
+                    }
                     break;
                 case 2:
                     ReadXML(input);//textFile
